@@ -40,10 +40,26 @@ INSTALLED_APPS = [
     'rest_framework',
 ]
 
-
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
-    'PAGE_SIZE': 10
+    # 'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
+    'PAGE_SIZE': 10,
+    'DEFAULT_THROTTLE_CLASSES': ('rest_framework.throttling.AnonRateThrottle',
+                                 'rest_framework.throttling.UserRateThrottle',
+                                 'snippets.CustomThrottle.CustomThrottle'
+                                 ),
+    'DEFAULT_THROTTLE_RATES': {
+        'test_model': '2/day',
+        'anon': '2/minute',
+        'user': '1000/day'
+    }
+}
+
+#本地缓存设置
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
 }
 
 
@@ -84,8 +100,8 @@ WSGI_APPLICATION = 'tutorial.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'study',   #数据库名
-        'USER': 'root',    #用户名
+        'NAME': 'study',  # 数据库名
+        'USER': 'root',  # 用户名
         'PASSWORD': 'Ag958868',
         'HOST': '127.0.0.1',
         'PORT': '3306',

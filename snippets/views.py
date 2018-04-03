@@ -1,11 +1,13 @@
 from django.contrib.auth.models import User
 from django.http import HttpResponse
+from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status, generics, permissions, mixins
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
 
 from snippets.models import Snippet
 from snippets.permissions import IsOwnerOrReadOnly
@@ -13,6 +15,9 @@ from snippets.serializers import SnippetSerializer, UserSerializer
 
 
 # Create your views here.
+from tutorial.throttles.CustomThrottle import CustomThrottle
+from tutorial.throttles.MyThrottle import MyThrottle
+
 
 class JSONResponse(HttpResponse):
     def __init__(self, data, **kwargs):
@@ -160,7 +165,12 @@ class SnippetDetail(generics.RetrieveUpdateDestroyAPIView, ):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
 
 
+
 class UserList(generics.ListAPIView):
+    # throttle_classes = (AnonRateThrottle,MyThrottle)
+    # throttle_classes = (MyThrottle,)
+    throttle_classes = (CustomThrottle,)
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
 

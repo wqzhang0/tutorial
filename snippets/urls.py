@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
+from django.views.decorators.cache import cache_page
 from rest_framework import routers
 from rest_framework.urlpatterns import format_suffix_patterns
 
@@ -24,6 +25,7 @@ urlpatterns = [
     url(r'^$', views.SnippetList.as_view()),
     url(r'(?P<pk>[0-9]+)$', views.SnippetDetail.as_view()),
 
+    # url(r'^users/$',cache_page(60*15)(views.UserList.as_view())),
     url(r'^users/$',views.UserList.as_view()),
     url(r'^users/(?P<pk>[0-9]+)/$',views.UserDetail.as_view()),
     # url(r'^$', views.snippet_list),
